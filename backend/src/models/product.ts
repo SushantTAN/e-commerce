@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import db from './index';
 
 interface ProductAttributes {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
@@ -12,7 +12,7 @@ interface ProductAttributes {
 }
 
 class Product extends Model<ProductAttributes> implements ProductAttributes {
-  public id!: string;
+  public id!: number;
   public name!: string;
   public description!: string;
   public price!: number;

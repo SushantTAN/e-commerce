@@ -10,7 +10,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-export const getProducts = () => API.get<Product[]>('/products');
+export const getProducts = () => API.get<{ data: Product[] }>('/products');
 export const createProduct = (product: Omit<Product, 'id'>) => API.post<Product>('/products', product);
 export const updateProduct = (id: string, product: Omit<Product, 'id'>) => API.put<Product>(`/products/${id}`, product);
 export const deleteProduct = (id: string) => API.delete<void>(`/products/${id}`);

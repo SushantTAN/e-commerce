@@ -32,7 +32,7 @@ const Header = () => {
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/">
-          <p className="text-xl font-bold">WebApp</p>
+          <p className="text-xl font-bold">MeroCommerce</p>
         </Link>
         <nav className="flex items-center">
           <Link href="/products">

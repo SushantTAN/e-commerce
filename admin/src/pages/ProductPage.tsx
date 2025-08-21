@@ -11,10 +11,7 @@ const ProductPage = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: products, isLoading, isError } = useQuery<Product[]>({ queryKey: ['products'], queryFn: async () => {
-    const response = await getProducts();
-    return response.data;
-  } });
+  const { data, isLoading, isError } = useQuery<{ data: Product[] }>({ queryKey: ['products'], queryFn: () => getProducts().then(res => res.data) });
 
   const addProductMutation = useMutation({
     mutationFn: createProduct,
@@ -62,7 +59,7 @@ const ProductPage = () => {
           Add Product
         </Button>
       </div>
-      <ProductTable products={products || []} onEdit={handleOpenEditModal} />
+      <ProductTable products={data?.data || []} onEdit={handleOpenEditModal} />
       <ProductModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

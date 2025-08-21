@@ -1,12 +1,36 @@
 import { Request, Response } from 'express';
 import Product from '../models/product';
+import { Op } from 'sequelize';
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const { category } = req.query;
-    const where = category ? { category: category as string } : {};
-    const products = await Product.findAll({ where });
-    res.status(200).json(products);
+    const { category, search, sortBy, sortOrder, page = 1, limit = 10 } = req.query;
+
+    const where: any = {};
+    if (category) {
+      where.category = category as string;
+    }
+    if (search) {
+      where.name = { [Op.like]: `%${search}%` };
+    }
+
+    const order: any = [];
+    if (sortBy) {
+      order.push([sortBy as string, (sortOrder as string) || 'ASC']);
+    }
+
+    const products = await Product.findAndCountAll({
+      where,
+      order,
+      offset: (Number(page) - 1) * Number(limit),
+      limit: Number(limit),
+    });
+
+    res.status(200).json({
+      data: products.rows,
+      totalPages: Math.ceil(products.count / Number(limit)),
+      currentPage: Number(page),
+    });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });
   }

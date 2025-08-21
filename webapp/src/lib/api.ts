@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
-
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-export default API;
+export const fetchProducts = async ({ pageParam = 1, queryKey }: any) => {
+  const [_, filters] = queryKey;
+  const { data } = await api.get('/products', {
+    params: { ...filters, page: pageParam },
+  });
+  return data;
+};
