@@ -1,61 +1,60 @@
-"use client";
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import API from '@/lib/api';
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './ThemeToggle';
-
-const fetchUser = async () => {
-  const { data } = await API.get('/users/profile');
-  return data;
-};
+import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { getCart } from '@/lib/api';
 
 const Header = () => {
-  const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: user, isLoading } = useQuery({
-    queryKey: ['user'],
-    queryFn: fetchUser,
-    retry: false,
+  const { user, logout, isAuthenticated } = useAuth();
+
+  const { data: cart } = useQuery({
+    queryKey: ['cart'],
+    queryFn: getCart,
+    enabled: isAuthenticated(), // Only fetch cart if authenticated
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    queryClient.invalidateQueries({ queryKey: ['user'] });
+    logout();
     router.push('/login');
   };
 
+  const cartItemCount = cart?.products?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+
   return (
-    <header className="bg-gray-800 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="bg-background border-b">
+      <div className="container mx-auto flex justify-between items-center p-4">
         <Link href="/">
-          <p className="text-xl font-bold">MeroCommerce</p>
+          <h1 className="text-2xl font-bold">MeroCommerce</h1>
         </Link>
-        <nav className="flex items-center">
+        <nav className="flex items-center space-x-4">
           <Link href="/products">
-            <p className="mr-4">Products</p>
+            Products
           </Link>
-          <Link href="/cart">
-            <p className="mr-4">Cart</p>
-          </Link>
-          {user && (
+          {isAuthenticated() ? (
             <>
+              <Link href="/cart" className="relative">
+                Cart ({cartItemCount})
+              </Link>
               <Link href="/orders">
-                <p className="mr-4">Orders</p>
+                Orders
               </Link>
               <Link href="/profile">
-                <p className="mr-4">Profile</p>
+                Welcome, {user?.firstName}
               </Link>
-              <Button onClick={handleLogout} className="mr-4">Logout</Button>
+              <Button onClick={handleLogout} size="sm">Logout</Button>
             </>
-          )}
-          {!user && !isLoading && (
-            <Link href="/login">
-              <p className="mr-4">Login</p>
-            </Link>
+          ) : (
+            <Button asChild size="sm">
+                <Link href="/login">
+                Login
+                </Link>
+            </Button>
           )}
           <ThemeToggle />
         </nav>

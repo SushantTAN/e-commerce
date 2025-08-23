@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } from '../controllers/order';
+import { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, getCart, addToCart } from '../controllers/order';
 import { auth, isAdmin } from '../middlewares/auth';
 
 const router = Router();
+
+router.get('/cart', auth, getCart);
+router.post('/cart/add', auth, addToCart);
 
 router.route('/')
   .get(auth, isAdmin, getAllOrders) // Only admin can get all orders

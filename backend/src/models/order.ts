@@ -7,7 +7,7 @@ interface OrderAttributes {
   userId: string;
   products: Array<{ productId: string; quantity: number }>;
   totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'cart';
   shippingAddress: string;
 }
 
