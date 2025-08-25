@@ -7,7 +7,9 @@ module.exports = {
     const products = [];
     for (let i = 0; i < 100; i++) {
       products.push({
+        id: faker.string.uuid(),
         name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
         category: faker.commerce.department(),
         price: faker.commerce.price(),
         stock: faker.number.int({ min: 0, max: 100 }),

@@ -49,7 +49,6 @@ const CartPage = () => {
 
   const handleRemoveFromCart = (itemId: string) => {
     // This functionality is not yet implemented in the backend
-    console.log('Remove item from cart:', itemId);
     // For now, just invalidate the query to refetch the cart
     queryClient.invalidateQueries({ queryKey: ['cart'] });
   };

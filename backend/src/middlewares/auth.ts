@@ -17,8 +17,6 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
-    console.log("token", token);
-
     if (!token) {
       return res.status(401).json({ message: 'Authentication failed' });
     }
@@ -29,8 +27,6 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET) as { id: string; email: string; iat: number; exp: number; };
     const user = await User.findByPk(decodedToken.id);
 
-    console.log("user", user);
-
     if (!user) {
       return res.status(401).json({ message: 'Authentication failed' });
     }
@@ -38,7 +34,6 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
     req.user = user;
     next();
   } catch (error) {
-    console.log("error", error,)
     res.status(401).json({ message: 'Authentication failed' });
   }
 };
