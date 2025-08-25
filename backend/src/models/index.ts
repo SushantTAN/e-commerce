@@ -3,6 +3,15 @@ import { development } from '../config/database';
 import User from './user';
 import Product from './product';
 import Order from './order';
+import Category from './category';
+
+// Define an interface for the db object
+interface Db {
+  User: typeof User;
+  Product: typeof Product;
+  Order: typeof Order;
+  Category: typeof Category;
+}
 
 if (!development.database || !development.username || !development.password || !development.host) {
   throw new Error('Missing database configuration environment variables (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST)');
@@ -18,6 +27,8 @@ const sequelize = new Sequelize(
     port: development.port ? parseInt(development.port as string, 10) : undefined,
   }
 );
+
+export { sequelize }; // Export sequelize directly
 
 const testConnection = async () => {
   try {
@@ -76,8 +87,8 @@ User.init(
 Product.init(
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     name: {
@@ -96,9 +107,13 @@ Product.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: true, // Can be false if every product must have a category
+      references: {
+        model: 'Categories', // This is the table name
+        key: 'id',
+      },
     },
     stock: {
       type: DataTypes.INTEGER,
@@ -149,15 +164,49 @@ Order.init(
   }
 );
 
-const db = {
-  sequelize,
+Category.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'Categories',
+    modelName: 'Category',
+  }
+);
+
+const db: Db = {
   User,
   Product,
   Order,
+  Category,
 };
 
 // Define associations
 db.User.hasMany(db.Order, { foreignKey: 'userId', as: 'orders' });
 db.Order.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+
+db.Category.hasMany(db.Product, { foreignKey: 'categoryId', as: 'products' });
+db.Product.belongsTo(db.Category, { foreignKey: 'categoryId', as: 'category' });
 
 export default db;

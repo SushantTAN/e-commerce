@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
 import Product from '../models/product';
+import db from '../models/index';
 import { Op } from 'sequelize';
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const { category, search, sortBy, sortOrder, page = 1, limit = 10 } = req.query;
+    const { categoryId, search, sortBy, sortOrder, page = 1, limit = 10 } = req.query;
 
     const where: any = {};
-    if (category) {
-      where.category = category as string;
+    if (categoryId) {
+      where.categoryId = categoryId as string;
     }
     if (search) {
-      where.name = { [Op.like]: `%${search}%` };
+      where.name = { [Op.iLike]: `%${search}%` };
     }
 
     const order: any = [];
@@ -24,6 +25,7 @@ export const getProducts = async (req: Request, res: Response) => {
       order,
       offset: (Number(page) - 1) * Number(limit),
       limit: Number(limit),
+      include: { model: db.Category, as: 'category' },
     });
 
     res.status(200).json({
@@ -39,7 +41,7 @@ export const getProducts = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const product = await Product.findByPk(id);
+    const product = await Product.findByPk(id, { include: { model: db.Category, as: 'category' } });
     if (product) {
       res.status(200).json(product);
     } else {
@@ -52,7 +54,8 @@ export const getProductById = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const product = await Product.create(req.body);
+    const { categoryId, ...productData } = req.body;
+    const product = await Product.create({ ...productData, categoryId });
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });
@@ -62,9 +65,10 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const [updated] = await Product.update(req.body, { where: { id } });
+    const { categoryId, ...productData } = req.body;
+    const [updated] = await Product.update({ ...productData, categoryId }, { where: { id } });
     if (updated) {
-      const updatedProduct = await Product.findByPk(id);
+      const updatedProduct = await Product.findByPk(id, { include: { model: db.Category, as: 'category' } });
       res.status(200).json(updatedProduct);
     } else {
       res.status(404).json({ message: 'Product not found' });

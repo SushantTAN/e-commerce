@@ -1,10 +1,16 @@
+export interface Category {
+  id: string;
+  name: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
   imageUrl: string;
-  category: string;
+  categoryId: string; // New field for foreign key
+  category?: Category; // Optional: To hold the associated Category object
   stock: number;
 }
 

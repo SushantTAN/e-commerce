@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Category } from '../types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -39,5 +40,10 @@ export const addToCart = async (productId: string, quantity: number) => {
 
 export const fetchProductById = async (productId: string) => {
   const { data } = await api.get(`/products/${productId}`);
+  return data;
+};
+
+export const fetchCategories = async () => {
+  const { data } = await api.get('/categories');
   return data;
 };

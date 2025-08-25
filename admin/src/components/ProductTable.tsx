@@ -51,7 +51,7 @@ const ProductTable = ({ products, onEdit }: ProductTableProps) => {
             products.map(product => (
               <TableRow key={product.id}>
                 <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
+                <TableCell>{product.category?.name}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>

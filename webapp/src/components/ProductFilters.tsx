@@ -1,8 +1,11 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCategories } from '../lib/api';
+import { Category } from '../types';
 
 interface Filters {
   search: string;
-  category: string;
+  categoryId: string;
   sortBy: string;
   sortOrder: string;
 }
@@ -13,6 +16,8 @@ interface ProductFiltersProps {
 }
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange }) => {
+  const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useQuery<Category[]>({ queryKey: ['categories'], queryFn: fetchCategories });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     onFilterChange({ ...filters, [e.target.name]: e.target.value });
   };
@@ -27,17 +32,25 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange
         onChange={handleInputChange}
         className="border rounded-lg p-2 w-full md:w-auto"
       />
-      <select
-        name="category"
-        value={filters.category}
-        onChange={handleInputChange}
-        className="border rounded-lg p-2 w-full md:w-auto"
-      >
-        <option value="">All Categories</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Books">Books</option>
-      </select>
+      {isLoadingCategories ? (
+        <div>Loading categories...</div>
+      ) : isErrorCategories ? (
+        <div>Error loading categories.</div>
+      ) : (
+        <select
+          name="categoryId"
+          value={filters.categoryId}
+          onChange={handleInputChange}
+          className="border rounded-lg p-2 w-full md:w-auto"
+        >
+          <option value="">All Categories</option>
+          {categories?.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+      )}
       <select
         name="sortBy"
         value={filters.sortBy}

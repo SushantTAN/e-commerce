@@ -1,29 +1,28 @@
-"use client";
-
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import API from '@/lib/api';
+import { fetchProducts } from '@/lib/api';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-
-const fetchProducts = async (category: string, page: number) => {
-  const { data } = await API.get(`/products?category=${category}&page=${page}`);
-  return data;
-};
+import ProductFilters from '@/components/ProductFilters';
+import { Product } from '@/types';
 
 const ProductsPage = () => {
-  const [category, setCategory] = useState('');
+  const [filters, setFilters] = useState({
+    search: '',
+    categoryId: '',
+    sortBy: '',
+    sortOrder: 'ASC',
+  });
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['products', category, page],
-    queryFn: () => fetchProducts(category, page),
+    queryKey: ['products', filters, page],
+    queryFn: () => fetchProducts({ ...filters, page }),
   });
 
-  const handleAddToCart = (product: any) => {
-    const cart: any = queryClient.getQueryData(['cart']) || [];
+  const handleAddToCart = (product: Product) => {
+    const cart: Product[] = queryClient.getQueryData(['cart']) || [];
     queryClient.setQueryData(['cart'], [...cart, product]);
   };
 
@@ -34,16 +33,8 @@ const ProductsPage = () => {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Select onValueChange={setCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            {/* Add more categories here */}
-          </SelectContent>
-        </Select>
       </div>
+      <ProductFilters filters={filters} onFilterChange={setFilters} />
       <Table>
         <TableHeader>
           <TableRow>
@@ -54,11 +45,11 @@ const ProductsPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.products.map((product: any) => (
+          {data?.data?.map((product: Product) => (
             <TableRow key={product.id}>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.price}</TableCell>
-              <TableCell>{product.category}</TableCell>
+              <TableCell>{product.category?.name}</TableCell>
               <TableCell>
                 <Button onClick={() => handleAddToCart(product)}>Add to Cart</Button>
               </TableCell>
@@ -71,7 +62,7 @@ const ProductsPage = () => {
           Previous
         </Button>
         <span className="mx-4">Page {page}</span>
-        <Button onClick={() => setPage(page + 1)} disabled={data.products.length < 10}>
+        <Button onClick={() => setPage(page + 1)} disabled={data?.data?.length < 10}>
           Next
         </Button>
       </div>

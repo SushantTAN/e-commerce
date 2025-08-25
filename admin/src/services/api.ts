@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Product, User, Order } from '../types';
+import type { Product, User, Order, Category } from '../types';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
 
@@ -24,3 +24,5 @@ export const getOrderById = (id: string) => API.get<Order>(`/orders/${id}`);
 export const createOrder = (order: Omit<Order, 'id'>) => API.post<Order>('/orders', order);
 export const updateOrder = (id: string, order: Omit<Order, 'id'>) => API.put<Order>(`/orders/${id}`, order);
 export const deleteOrder = (id: string) => API.delete<void>(`/orders/${id}`);
+
+export const getCategories = () => API.get<Category[]>('/categories');

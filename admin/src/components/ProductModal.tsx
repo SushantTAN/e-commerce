@@ -5,7 +5,9 @@ import * as yup from 'yup';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import type { Product } from '../types';
+import type { Product, Category } from '../types';
+import { useQuery } from '@tanstack/react-query';
+import { getCategories } from '../services/api';
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -19,7 +21,7 @@ const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
   description: yup.string().required('Description is required'),
   price: yup.number().required('Price is required').positive(),
-  category: yup.string().required('Category is required'),
+  categoryId: yup.string().required('Category is required'),
   stock: yup.number().required('Stock is required').integer().min(0),
   imageUrl: yup.string().required('Image URL is required').url(),
 });
@@ -31,12 +33,14 @@ const ProductModal = ({ isOpen, onClose, onSubmit, product, isLoading }: Product
     resolver: yupResolver(schema),
   });
 
+  const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useQuery<Category[]>({ queryKey: ['categories'], queryFn: () => getCategories().then(res => res.data) });
+
   useEffect(() => {
     if (isOpen) { // Only reset when modal opens
       if (product) {
-        reset(product);
+        reset({ ...product, categoryId: product.category?.id || '' }); // Use categoryId from product.category
       } else {
-        reset({ name: '', description: '', price: 0, category: '', stock: 0, imageUrl: '' });
+        reset({ name: '', description: '', price: 0, categoryId: '', stock: 0, imageUrl: '' });
       }
     }
   }, [product, reset, isOpen]); // Add isOpen to dependency array
@@ -72,9 +76,22 @@ const ProductModal = ({ isOpen, onClose, onSubmit, product, isLoading }: Product
             {errors.price && <p className="text-xs text-red-600">{errors.price.message}</p>}
           </div>
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-            <Input id="category" {...register('category')} />
-            {errors.category && <p className="text-xs text-red-600">{errors.category.message}</p>}
+            <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700">Category</label>
+            {isLoadingCategories ? (
+              <div>Loading categories...</div>
+            ) : isErrorCategories ? (
+              <div>Error loading categories.</div>
+            ) : (
+              <select id="categoryId" {...register('categoryId')} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option value="">Select a category</option>
+                {categories?.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {errors.categoryId && <p className="text-xs text-red-600">{errors.categoryId.message}</p>}
           </div>
           <div>
             <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Stock</label>
