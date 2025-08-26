@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Raleway } from "next/font/google"; // Changed from Open_Sans to Raleway
 import "./globals.css";
 import Layout from "@/components/Layout";
 import Providers from "./providers";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "../components/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const raleway = Raleway({
+  weight: ['300', '400', '500', '700'], 
+  subsets: ["latin"],
+  display: 'swap'
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={raleway.className}>
         <Providers>
           <ThemeProvider
             attribute="class"
@@ -30,6 +35,7 @@ export default function RootLayout({
           </ThemeProvider>
           <Toaster />
         </Providers>
+        <Footer />
       </body>
     </html>
   );
