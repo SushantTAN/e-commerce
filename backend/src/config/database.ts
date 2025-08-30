@@ -2,29 +2,31 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const development = {
+const sharedConfig = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+};
+
+export const development = {
+  ...sharedConfig,
+  database: process.env.DB_NAME,
 };
 
 export const test = {
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  ...sharedConfig,
   database: process.env.DB_NAME_TEST,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: 'postgres',
 };
 
 export const production = {
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  ...sharedConfig,
   database: process.env.DB_NAME_PROD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: 'postgres',
 };
