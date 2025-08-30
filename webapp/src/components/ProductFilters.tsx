@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCategories } from '../lib/api';
 import { Category } from '../types';
+import useDebounce from '../hooks/useDebounce';
 
 interface Filters {
   search: string;
@@ -17,9 +18,19 @@ interface ProductFiltersProps {
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange }) => {
   const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories } = useQuery<Category[]>({ queryKey: ['categories'], queryFn: fetchCategories });
+  const [searchTerm, setSearchTerm] = useState(filters.search);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    onFilterChange({ ...filters, search: debouncedSearchTerm });
+  }, [debouncedSearchTerm]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    onFilterChange({ ...filters, [e.target.name]: e.target.value });
+    if (e.target.name === 'search') {
+      setSearchTerm(e.target.value);
+    } else {
+      onFilterChange({ ...filters, [e.target.name]: e.target.value });
+    }
   };
 
   return (
@@ -28,7 +39,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange
         type="text"
         name="search"
         placeholder="Search by name"
-        value={filters.search}
+        value={searchTerm}
         onChange={handleInputChange}
         className="border rounded-lg p-2 w-full md:w-auto"
       />
