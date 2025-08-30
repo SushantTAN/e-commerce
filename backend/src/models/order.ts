@@ -7,18 +7,18 @@ interface OrderAttributes {
   userId: string;
   products: Array<{ productId: string; quantity: number }>;
   totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'cart';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'cart' | 'completed';
   shippingAddress: string;
 }
 
-interface OrderCreationAttributes extends Optional<OrderAttributes, 'id'> {}
+interface OrderCreationAttributes extends Optional<OrderAttributes, 'id'> { }
 
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
   public id!: string;
   public userId!: string;
   public products!: Array<{ productId: string; quantity: number }>;
   public totalAmount!: number;
-  public status!: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  public status!: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'cart' | 'completed';
   public shippingAddress!: string;
 }
 
