@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import db from '../models';
+import User from '../models/user';
 import { AuthRequest } from '../middlewares/auth';
 
 export const getCart = async (req: AuthRequest, res: Response) => {
@@ -126,6 +128,22 @@ export const updateOrder = async (req: AuthRequest, res: Response) => {
     res.status(200).json(order);
   } catch (error) {
     res.status(500).json({ message: 'Error updating order', error });
+  }
+};
+
+export const getMyOrders = async (req: AuthRequest, res: Response) => {
+  try {
+
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const userId = req.user.id;
+
+    const orders = await db.Order.findAll({ where: { userId, status: { [Op.ne]: 'cart' } } });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching orders', error });
   }
 };
 

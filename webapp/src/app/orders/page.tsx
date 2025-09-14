@@ -1,47 +1,68 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import API from '@/lib/api';
+import { fetchMyOrders } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-const fetchOrders = async () => {
-  const { data } = await API.get('/orders');
-  return data;
-};
+import dayjs from 'dayjs';
 
 const OrdersPage = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['orders'],
-    queryFn: fetchOrders,
+  const { isAuthenticated } = useAuth();
+
+  const { data: orders, isLoading, isError } = useQuery({
+    queryKey: ['myOrders'],
+    queryFn: fetchMyOrders,
+    enabled: isAuthenticated(),
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching orders</div>;
+  if (isLoading) {
+    return <div className="container mx-auto py-10">Loading orders...</div>;
+  }
+
+  if (isError) {
+    return <div className="container mx-auto py-10">Error loading orders.</div>;
+  }
 
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">My Orders</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Order ID</TableHead>
-            <TableHead>Total Amount</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((order: any) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell>{order.totalAmount}</TableCell>
-              <TableCell>{order.status}</TableCell>
-              <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+      {orders?.length === 0 ? (
+        <p>You have no orders yet.</p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Total Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Shipping Address</TableHead>
+              <TableHead>Products</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {orders?.map((order: any) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.id}</TableCell>
+                <TableCell>{dayjs(order.createdAt).format('YYYY-MM-DD HH:mm')}</TableCell>
+                <TableCell>${order.totalAmount}</TableCell>
+                <TableCell>{order.status}</TableCell>
+                <TableCell>{order.shippingAddress}</TableCell>
+                <TableCell>
+                  <ul>
+                    {order.products.map((product: any) => (
+                      <li key={product.productId}>
+                        {product.productId} x {product.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };

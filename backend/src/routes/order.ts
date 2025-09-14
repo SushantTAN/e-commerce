@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { auth, isAdmin } from '../middlewares/auth';
-import { getCart, addToCart, getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, checkout } from '../controllers/order';
+import { getCart, addToCart, getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder, checkout, getMyOrders } from '../controllers/order';
 
 const router = Router();
 
@@ -10,6 +10,7 @@ router.post('/cart/add', auth, addToCart);
 
 // Order routes
 router.get('/', auth, getAllOrders);
+router.get('/my-orders', auth, getMyOrders);
 router.get('/:id', auth, getOrderById);
 router.post('/', auth, createOrder);
 router.put('/:id', auth, updateOrder);

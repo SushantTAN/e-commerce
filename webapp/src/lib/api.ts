@@ -48,6 +48,11 @@ export const fetchProductById = async (productId: string) => {
   return data;
 };
 
+export const fetchMyOrders = async () => {
+  const { data } = await api.get('/orders/my-orders');
+  return data;
+};
+
 export const fetchCategories = async () => {
   const { data } = await api.get('/categories');
   return data;
