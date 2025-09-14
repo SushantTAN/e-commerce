@@ -129,6 +129,30 @@ export const updateOrder = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const checkout = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const { cartId, shippingAddress } = req.body;
+    const userId = req.user.id;
+
+    const cart = await db.Order.findOne({ where: { id: cartId, userId, status: 'cart' } });
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    cart.status = 'pending';
+    cart.shippingAddress = shippingAddress;
+    await cart.save();
+
+    res.status(200).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Error during checkout', error });
+  }
+};
+
 export const deleteOrder = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;

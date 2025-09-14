@@ -38,6 +38,11 @@ export const addToCart = async (productId: string, quantity: number) => {
   return data;
 };
 
+export const checkout = async (cartId: string, shippingAddress: string) => {
+  const { data } = await api.post('/orders/checkout', { cartId, shippingAddress });
+  return data;
+};
+
 export const fetchProductById = async (productId: string) => {
   const { data } = await api.get(`/products/${productId}`);
   return data;

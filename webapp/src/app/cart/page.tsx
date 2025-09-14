@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCart, fetchProductById } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const CartPage = () => {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const { data: cart, isLoading: isLoadingCart, isError: isErrorCart } = useQuery({
     queryKey: ['cart'],
@@ -46,6 +48,10 @@ const CartPage = () => {
       price: parseFloat(productDetail?.price) || 0,
     };
   });
+
+  const handleProceedToCheckout = () => {
+    router.push('/checkout');
+  };
 
   const handleRemoveFromCart = (itemId: string) => {
     // This functionality is not yet implemented in the backend
@@ -85,6 +91,13 @@ const CartPage = () => {
             ))}
           </TableBody>
         </Table>
+      )}
+      {cartItemsWithDetails.length > 0 && (
+        <div className="flex justify-end mt-4">
+          <Button onClick={handleProceedToCheckout}>
+            Proceed to Checkout
+          </Button>
+        </div>
       )}
     </div>
   );
