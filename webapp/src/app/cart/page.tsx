@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getCart, fetchProductById } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { fetchProductById, getCart } from '@/lib/api';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const CartPage = () => {
@@ -60,8 +60,8 @@ const CartPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
+    <div className="container mx-auto py-10 px-4">
+      <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
       {cartItemsWithDetails.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
@@ -84,7 +84,7 @@ const CartPage = () => {
                 <TableCell>${(item.price * item.quantity)?.toFixed(2)}</TableCell>
                 <TableCell>
                   <Button variant="destructive" onClick={() => handleRemoveFromCart(item.productId)}>
-                    Remove
+                    <Trash />
                   </Button>
                 </TableCell>
               </TableRow>
