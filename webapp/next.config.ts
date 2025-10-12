@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.example.com" },
       { protocol: "https", hostname: "loremflickr.com" },
       { protocol: "https", hostname: "help.rangeme.com" },
+      { protocol: "https", hostname: "coolmaterial.com" },
+
+
     ],
   },
 };

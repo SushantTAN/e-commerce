@@ -13,6 +13,11 @@ const poppins = Poppins({
   variable: "--font-poppins",           // exposes a CSS variable
 });
 
+export const metadata: Metadata = {
+  title: "MeroCommerce",
+  description: "Order your favourite deals from the comfort of your home",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
