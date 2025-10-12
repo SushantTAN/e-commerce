@@ -27,13 +27,13 @@ const OrdersPage = () => {
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-4">My Orders</h1>
+      <h1 className="text-2xl font-semibold mb-4">My Orders</h1>
       {orders?.length === 0 ? (
         <p>You have no orders yet.</p>
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className='border-gray-500'>
               {/* <TableHead>Order ID</TableHead> */}
               <TableHead>Date</TableHead>
               <TableHead>Total Amount</TableHead>
@@ -46,14 +46,14 @@ const OrdersPage = () => {
             {orders?.map((order: any) => (
               <TableRow key={order.id}>
                 {/* <TableCell>{order.id}</TableCell> */}
-                <TableCell>{dayjs(order.createdAt).format('YYYY-MM-DD HH:mm')}</TableCell>
+                <TableCell>{dayjs(order.createdAt).format('YYYY-MM-DD hh:mm A')}</TableCell>
                 <TableCell>${order.totalAmount}</TableCell>
                 <TableCell><StatusChip status={order.status} label={order.status} /></TableCell>
-                <TableCell>{order.shippingAddress}</TableCell>
+                <TableCell className='capitalize'>{order.shippingAddress}</TableCell>
                 <TableCell>
                   <ul className='flex gap-2 flex-wrap'>
                     {order.products.map((product: any) => (
-                      <li key={product.productId} className='rounded-full bg-blue-100 border border-blue-200 text-blue-950 px-2 py-1'>
+                      <li key={product.productId} className='rounded-full bg-blue-100 border border-blue-200 text-blue-950 px-2 py-1 text-xs'>
                         {product.productId} x {product.quantity}
                       </li>
                     ))}
