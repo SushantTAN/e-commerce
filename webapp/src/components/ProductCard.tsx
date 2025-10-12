@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addToCart } from '@/lib/api';
 import { useToast } from './ui/use-toast';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -44,15 +45,27 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <Link href={`/products/${product.id}`}>
-      <div className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
-        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover mb-4 rounded-md" />
-        <h2 className="text-lg font-semibold">{product.name}</h2>
-        <p className="text-gray-500 mb-4">${parseFloat(product.price).toFixed(2)}</p>
-        {isAuthenticated() && (
-          <Button onClick={handleAddToCart} disabled={mutation.isPending} className="mt-auto">
-            {mutation.isPending ? 'Adding...' : 'Add to Cart'}
-          </Button>
-        )}
+      <div className="border border-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col overflow-hidden">
+
+        <div className="relative w-full aspect-video">
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority={false}
+          />
+        </div>
+        <div className='px-4 py-2'>
+          <h2 className="text-lg font-semibold line-clamp-1">{product.name}</h2>
+          <p className="text-gray-500 mb-4">${parseFloat(product.price?.toString()).toFixed(2)}</p>
+          {isAuthenticated() && (
+            <Button onClick={handleAddToCart} disabled={mutation.isPending} className="mt-auto">
+              {mutation.isPending ? 'Adding...' : 'Add to Cart'}
+            </Button>
+          )}
+        </div>
       </div>
     </Link>
   );

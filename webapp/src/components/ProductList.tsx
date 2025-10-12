@@ -4,6 +4,7 @@ import { fetchProducts } from '@/lib/api';
 import ProductCard from './ProductCard';
 import ProductFilters from './ProductFilters';
 import ProductCardSkeleton from './ProductCardSkeleton';
+import { Button } from './ui/button';
 
 interface Product {
   id: number;
@@ -50,21 +51,22 @@ const ProductList: React.FC = () => {
     return (
       <div className="text-center">
         <p className="text-red-500">Error fetching products. Please try again later.</p>
-        <button
+        <Button
+          variant={"default"}
           onClick={() => refetch()}
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded dark:bg-blue-700 dark:hover:bg-blue-900"
+          className="mt-4"
         >
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <div className='w-full'>
-      <h1 className="text-3xl font-bold mb-4">Products</h1>
+      <h1 className="text-3xl font-semibold mb-4">Products</h1>
       <ProductFilters filters={filters} onFilterChange={handleFilterChange} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {isFetching && !isFetchingNextPage ? (
           <>
             <ProductCardSkeleton />
@@ -82,13 +84,17 @@ const ProductList: React.FC = () => {
         )}
       </div>
       {hasNextPage && (
-        <button
-          onClick={() => fetchNextPage()}
-          disabled={isFetchingNextPage}
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded dark:bg-blue-700 dark:hover:bg-blue-900"
-        >
-          {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-        </button>
+        <div className='flex justify-center'>
+          <Button
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            variant={"outline"}
+            className='mt-6'
+          // className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded dark:bg-blue-700 dark:hover:bg-blue-900"
+          >
+            {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+          </Button>
+        </div>
       )}
     </div>
   );
