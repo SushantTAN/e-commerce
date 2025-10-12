@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import AmountDisplay from '@/components/AmountDisplay';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getCart, checkout } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { checkout, getCart } from '@/lib/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 const CheckoutPage = () => {
   const { isAuthenticated } = useAuth();
@@ -58,7 +59,7 @@ const CheckoutPage = () => {
               </li>
             ))}
           </ul>
-          <div className="text-right font-bold mt-4">Total: ${cart?.totalAmount}</div>
+          <div className="text-right font-bold mt-4">Total: <AmountDisplay amount={cart?.totalAmount} /></div>
         </div>
         <div>
           <h2 className="text-xl font-semibold mb-2">Shipping Information</h2>

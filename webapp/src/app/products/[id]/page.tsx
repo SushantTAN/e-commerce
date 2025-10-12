@@ -1,6 +1,7 @@
 import { fetchProductById } from '@/lib/api';
 import { Product } from '@/types';
 import AddToCartButton from '@/components/AddToCartButton';
+import AmountDisplay from '@/components/AmountDisplay';
 
 const ProductDetailPage = async ({ params }: { params: { id: string } }) => {
 
@@ -20,7 +21,7 @@ const ProductDetailPage = async ({ params }: { params: { id: string } }) => {
         <div>
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{product.description}</p>
-          <p className="text-2xl font-bold mb-4">${product.price}</p>
+          <p className="text-2xl font-bold mb-4"><AmountDisplay amount={product.price} /></p>
           <AddToCartButton product={product} />
         </div>
       </div>

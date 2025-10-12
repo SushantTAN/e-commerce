@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchMyOrders } from '@/lib/api';
-import { useAuth } from '@/contexts/AuthContext';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import dayjs from 'dayjs';
+import AmountDisplay from '@/components/AmountDisplay';
 import { StatusChip } from '@/components/StatusChip';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useAuth } from '@/contexts/AuthContext';
+import { fetchMyOrders } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
 const OrdersPage = () => {
   const { isAuthenticated } = useAuth();
@@ -47,7 +47,7 @@ const OrdersPage = () => {
               <TableRow key={order.id}>
                 {/* <TableCell>{order.id}</TableCell> */}
                 <TableCell>{dayjs(order.createdAt).format('YYYY-MM-DD hh:mm A')}</TableCell>
-                <TableCell>${order.totalAmount}</TableCell>
+                <TableCell><AmountDisplay amount={order.totalAmount} /></TableCell>
                 <TableCell><StatusChip status={order.status} label={order.status} /></TableCell>
                 <TableCell className='capitalize'>{order.shippingAddress}</TableCell>
                 <TableCell>

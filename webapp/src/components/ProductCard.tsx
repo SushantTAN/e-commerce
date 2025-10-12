@@ -7,6 +7,9 @@ import { useToast } from './ui/use-toast';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import useCurrency from '@/hooks/useCurrency';
+import AmountDisplay from './AmountDisplay';
+
 interface Product {
   id: string;
   name: string;
@@ -17,6 +20,7 @@ interface Product {
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { currency } = useCurrency();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -59,7 +63,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         </div>
         <div className='px-4 py-2'>
           <h2 className="text-lg font-semibold line-clamp-1">{product.name}</h2>
-          <p className="text-gray-500 mb-4">${parseFloat(product.price?.toString()).toFixed(2)}</p>
+          <p className="text-gray-500 mb-4"><AmountDisplay amount={parseFloat(product.price?.toString()).toFixed(2)} /></p>
           {isAuthenticated() && (
             <Button onClick={handleAddToCart} disabled={mutation.isPending} className="mt-auto">
               {mutation.isPending ? 'Adding...' : 'Add to Cart'}

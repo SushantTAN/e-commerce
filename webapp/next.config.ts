@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.example.com" },
       { protocol: "https", hostname: "loremflickr.com" },
+      { protocol: "https", hostname: "help.rangeme.com" },
     ],
   },
 };
