@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { SquarePen, Trash } from 'lucide-react';
 
 interface OrderTableProps {
   orders: Order[];
@@ -59,17 +60,20 @@ const OrderTable = ({ orders, onEdit }: OrderTableProps) => {
                 <TableCell>
                   <Button
                     onClick={() => onEdit(order)}
-                    variant="outline"
+                    variant="ghost"
+                    size="icon"
                     className="mr-2"
                   >
-                    Edit
+                    <SquarePen />
                   </Button>
                   <Button
                     onClick={() => handleDelete(order.id)}
-                    variant="destructive"
+                    variant="ghost"
+                    size="icon"
+                    className='text-destructive'
                     disabled={deleteOrderMutation.isLoading}
                   >
-                    {deleteOrderMutation.isLoading ? 'Deleting...' : 'Delete'}
+                    {deleteOrderMutation.isLoading ? 'Deleting...' : <Trash />}
                   </Button>
                 </TableCell>
               </TableRow>

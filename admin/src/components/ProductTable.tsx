@@ -1,7 +1,4 @@
-import React from 'react';
-import type { Product } from '../types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteProduct } from '../services/api';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -10,7 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SquarePen, Trash } from 'lucide-react';
+import { deleteProduct } from '../services/api';
+import type { Product } from '../types';
 
 interface ProductTableProps {
   products: Product[];
@@ -57,17 +57,20 @@ const ProductTable = ({ products, onEdit }: ProductTableProps) => {
                 <TableCell>
                   <Button
                     onClick={() => onEdit(product)}
-                    variant="outline"
+                    variant="ghost"
                     className="mr-2"
+                    size="icon"
                   >
-                    Edit
+                    <SquarePen />
                   </Button>
                   <Button
                     onClick={() => handleDelete(product.id)}
-                    variant="destructive"
+                    variant="ghost"
+                    size="icon"
                     disabled={deleteProductMutation.isLoading}
+                    className='text-destructive'
                   >
-                    {deleteProductMutation.isLoading ? 'Deleting...' : 'Delete'}
+                    {deleteProductMutation.isLoading ? 'Deleting...' : <Trash />}
                   </Button>
                 </TableCell>
               </TableRow>

@@ -52,7 +52,7 @@ const ProductPage = () => {
   if (isError) return <div>Error loading products.</div>;
 
   return (
-    <div className="p-8">
+    <div className="">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Product Management</h1>
         <Button onClick={handleOpenAddModal}>

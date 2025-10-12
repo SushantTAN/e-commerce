@@ -11,10 +11,12 @@ const OrderPage = () => {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: orders, isLoading, isError } = useQuery<Order[]>({ queryKey: ['orders'], queryFn: async () => {
-    const response = await getOrders();
-    return response.data;
-  } });
+  const { data: orders, isLoading, isError } = useQuery<Order[]>({
+    queryKey: ['orders'], queryFn: async () => {
+      const response = await getOrders();
+      return response.data;
+    }
+  });
 
   const addOrderMutation = useMutation({
     mutationFn: createOrder,
@@ -55,7 +57,7 @@ const OrderPage = () => {
   if (isError) return <div>Error loading orders.</div>;
 
   return (
-    <div className="p-8">
+    <div className="">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Order Management</h1>
         <Button onClick={handleOpenAddModal}>
