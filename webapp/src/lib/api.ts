@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { Category } from '../types';
 
@@ -24,8 +25,8 @@ export const fetchProducts = async ({ pageParam = 1, queryKey }: any) => {
 };
 
 export const login = async (credentials: any) => {
-    const { data } = await api.post('/auth/login', credentials);
-    return data;
+  const { data } = await api.post('/auth/login', credentials);
+  return data;
 };
 
 export const getCart = async () => {

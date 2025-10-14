@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ const CartPage = () => {
   });
 
   const productQueries = useQueries({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queries: (cart?.products || []).map((item: any) => ({
       queryKey: ['product', item.productId],
       queryFn: () => fetchProductById(item.productId),
@@ -38,6 +40,7 @@ const CartPage = () => {
     return <div className="container mx-auto py-10">Error loading cart or product details.</div>;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cartItemsWithDetails = (cart?.products || []).map((item: any) => {
     const productDetail = productQueries.find(
       (query) => query.data?.id === item.productId

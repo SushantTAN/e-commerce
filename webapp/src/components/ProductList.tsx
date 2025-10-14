@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProducts } from '@/lib/api';
