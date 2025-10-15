@@ -8,13 +8,15 @@ import StarRating from '@/components/StarRating';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const product: Product = await fetchProductById(id);
-  // const allProducts: Product[] = await fetchProducts({});
+type PageProps = {
+  params: Promise<{ id: string }>;  // **make params a Promise**
+  // optionally: searchParams: Promise<…>
+};
 
-  // Filter out the current product and get 3 related products
-  // const relatedProducts = allProducts?.filter(p => p.id !== product.id).slice(0, 3);
+// The component must be `async` so you can `await params`
+export default async function Page(props: PageProps) {
+  const { id } = await props.params;  // await to get { id: string }
+  const product: Product = await fetchProductById(id);
 
   if (!product) {
     return (
@@ -30,13 +32,15 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="mb-8">
-        <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <Link
+          href="/"
+          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
           &larr; Back to all products
         </Link>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
-          {/* <Card className="overflow-hidden"> */}
           <div className="p-0 relative h-96 rounded overflow-hidden">
             <Image
               src={product.imageUrl}
@@ -47,7 +51,6 @@ export default async function Page({ params }: { params: { id: string } }) {
               className="w-full h-auto"
             />
           </div>
-          {/* </Card> */}
         </div>
         <div className="lg:col-span-1">
           <Card>
@@ -63,7 +66,9 @@ export default async function Page({ params }: { params: { id: string } }) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StarRating activeStars={4} />
-                  <span className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">4.0 (12 reviews)</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                    4.0 (12 reviews)
+                  </span>
                 </div>
               </div>
               <div>
@@ -81,14 +86,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
       <Separator className="my-12" />
 
-      {/* <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-6">Related Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {relatedProducts.map(relatedProduct => (
-            <ProductCard key={relatedProduct.id} product={relatedProduct} />
-          ))}
-        </div>
-      </div> */}
+      {/* Related products section, if needed */}
     </div>
   );
 }

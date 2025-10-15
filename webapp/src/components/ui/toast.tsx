@@ -43,7 +43,7 @@ const toastVariants = cva(
   }
 )
 
-interface ToastProps
+export interface ToastProps
   extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
     VariantProps<typeof toastVariants> {}
 

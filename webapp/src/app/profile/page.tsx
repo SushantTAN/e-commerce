@@ -1,66 +1,72 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import API from '@/lib/api';
+import { api } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { User } from '@/types';
 
 const profileSchema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
+  firstName: yup.string().required('First Name is required'),
+  lastName: yup.string().required('Last Name is required'),
 });
+
+type ProfileFormInputs = yup.InferType<typeof profileSchema>;
 
 const passwordSchema = yup.object().shape({
-  password: yup.string().required(),
-  confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
+  password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  confirmPassword: yup.string()
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Confirm Password is required'),
 });
 
+type PasswordFormInputs = yup.InferType<typeof passwordSchema>;
+
 const fetchProfile = async () => {
-  const { data } = await API.get('/users/profile');
+  const { data } = await api.get<User>('/users/profile');
   return data;
 };
 
 const ProfilePage = () => {
   const queryClient = useQueryClient();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<User>({
     queryKey: ['user'],
     queryFn: fetchProfile,
   });
 
-  const { register: registerProfile, handleSubmit: handleSubmitProfile, formState: { errors: profileErrors } } = useForm({
+  const { register: registerProfile, handleSubmit: handleSubmitProfile, formState: { errors: profileErrors } } = useForm<ProfileFormInputs>({
     resolver: yupResolver(profileSchema),
-    values: data,
+    values: data ? { firstName: data.firstName, lastName: data.lastName } : undefined,
   });
 
-  const { register: registerPassword, handleSubmit: handleSubmitPassword, formState: { errors: passwordErrors } } = useForm({
+  const { register: registerPassword, handleSubmit: handleSubmitPassword, formState: { errors: passwordErrors } } = useForm<PasswordFormInputs>({
     resolver: yupResolver(passwordSchema),
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: any) => API.put('/users/profile', data),
+    mutationFn: (data: ProfileFormInputs) => api.put<User>('/users/profile', data),
     onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.data);
+      queryClient.setQueryData(['user'], data);
     },
   });
 
   const changePasswordMutation = useMutation({
-    mutationFn: (data: any) => API.post('/auth/reset-password/some-token', data), // This needs a proper token
+    mutationFn: (data: PasswordFormInputs) => api.post('/auth/reset-password/some-token', data), // This needs a proper token
     onSuccess: () => {
       // Handle successful password change
     },
   });
 
-  const onProfileSubmit = (data: any) => {
+  const onProfileSubmit: SubmitHandler<ProfileFormInputs> = (data) => {
     updateProfileMutation.mutate(data);
   };
 
-  const onPasswordSubmit = (data: any) => {
+  const onPasswordSubmit: SubmitHandler<PasswordFormInputs> = (data) => {
     changePasswordMutation.mutate(data);
   };
 

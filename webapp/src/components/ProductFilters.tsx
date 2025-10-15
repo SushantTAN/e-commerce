@@ -4,7 +4,7 @@ import { fetchCategories } from '../lib/api';
 import { Category } from '../types';
 import useDebounce from '../hooks/useDebounce';
 
-interface Filters {
+export interface Filters {
   search: string;
   categoryId: string;
   sortBy: string;

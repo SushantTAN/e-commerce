@@ -1,25 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProducts } from '@/lib/api';
 import ProductCard from './ProductCard';
-import ProductFilters from './ProductFilters';
+import ProductFilters, { Filters } from './ProductFilters';
 import ProductCardSkeleton from './ProductCardSkeleton';
 import { Button } from './ui/button';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
-
-
+import { Product } from '@/types';
 
 const ProductList: React.FC = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     search: '',
-    category: '',
+    categoryId: '',
     sortBy: '',
     sortOrder: 'ASC',
   });
@@ -44,7 +36,7 @@ const ProductList: React.FC = () => {
     initialPageParam: 1,
   });
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
   };
 
