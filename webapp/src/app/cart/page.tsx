@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import AmountDisplay from '@/components/AmountDisplay';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useAuth } from '@/contexts/AuthContext';
@@ -73,7 +74,7 @@ const CartPage = () => {
             <TableRow>
               <TableHead>Product</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
+              <TableHead>Rate</TableHead>
               <TableHead>Total</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -83,8 +84,8 @@ const CartPage = () => {
               <TableRow key={item.productId}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
-                <TableCell>${item.price?.toFixed(2)}</TableCell>
-                <TableCell>${(item.price * item.quantity)?.toFixed(2)}</TableCell>
+                <TableCell> <AmountDisplay amount={item.price?.toFixed(2)} /></TableCell>
+                <TableCell> <AmountDisplay amount={(item.price * item.quantity)?.toFixed(2)} /></TableCell>
                 <TableCell>
                   <Button variant="destructive" onClick={() => handleRemoveFromCart(item.productId)}>
                     <Trash />

@@ -17,7 +17,7 @@ api.interceptors.request.use((req) => {
 });
 
 export const fetchProducts = async ({ pageParam = 1, queryKey }: any) => {
-  const [_, filters] = queryKey;
+  const [_, filters] = queryKey || [];
   const { data } = await api.get('/products', {
     params: { ...filters, page: pageParam },
   });
