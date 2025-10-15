@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { fetchProductById } from '@/lib/api';
 import { Product } from '@/types';
-import { Star } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -36,18 +36,18 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
-          <div className="overflow-hidden rounded">
-
+          {/* <Card className="overflow-hidden"> */}
+          <div className="p-0 relative h-96 rounded overflow-hidden">
             <Image
               src={product.imageUrl}
               alt={product.name}
-              width={600}
-              height={600}
+              layout="fill"
+              objectFit="cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="w-full h-auto object-cover max-h-[600px]"
+              className="w-full h-auto"
             />
-
           </div>
+          {/* </Card> */}
         </div>
         <div className="lg:col-span-1">
           <Card>
@@ -62,11 +62,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-5 h-5 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" />
-                    ))}
-                  </div>
+                  <StarRating activeStars={4} />
                   <span className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">4.0 (12 reviews)</span>
                 </div>
               </div>
